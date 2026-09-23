@@ -1,0 +1,47 @@
+{
+  "name": "Retail Real-Time KPIs",
+  "queries": [
+    {
+      "name": "Revenue Today",
+      "query": "SELECT sum(total_revenue) as Revenue FROM retail_lakehouse.gold.fact_daily_sales WHERE date_key = current_date()"
+    },
+    {
+      "name": "Orders Today",
+      "query": "SELECT sum(total_orders) as Orders FROM retail_lakehouse.gold.fact_daily_sales WHERE date_key = current_date()"
+    },
+    {
+      "name": "Top 10 Products",
+      "query": "SELECT p.name as product_name, sum(o.order_amount) as total_revenue FROM retail_lakehouse.gold.fact_orders o JOIN retail_lakehouse.gold.dim_products p ON o.product_key = p.product_key GROUP BY 1 ORDER BY 2 DESC LIMIT 10"
+    },
+    {
+      "name": "Revenue by Region",
+      "query": "SELECT region, sum(total_revenue) as revenue FROM retail_lakehouse.gold.fact_daily_sales GROUP BY region"
+    }
+  ],
+  "layout": [
+    {
+      "widget_type": "counter",
+      "title": "Revenue Today",
+      "query_name": "Revenue Today",
+      "x": 0, "y": 0, "width": 2, "height": 2
+    },
+    {
+      "widget_type": "counter",
+      "title": "Orders Today",
+      "query_name": "Orders Today",
+      "x": 2, "y": 0, "width": 2, "height": 2
+    },
+    {
+      "widget_type": "bar",
+      "title": "Top 10 Products by Revenue",
+      "query_name": "Top 10 Products",
+      "x": 0, "y": 2, "width": 4, "height": 4
+    },
+    {
+      "widget_type": "map",
+      "title": "Revenue by Region",
+      "query_name": "Revenue by Region",
+      "x": 4, "y": 0, "width": 4, "height": 6
+    }
+  ]
+}

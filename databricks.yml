@@ -1,0 +1,80 @@
+bundle:
+  name: retail-lakehouse
+
+variables:
+  catalog:
+    description: "Target Unity Catalog"
+    default: retail_lakehouse_dev
+  environment:
+    description: "Environment (dev/prod)"
+    default: dev
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: ${workspace.host}
+    variables:
+      catalog: retail_lakehouse_dev
+      environment: dev
+
+  prod:
+    mode: production
+    workspace:
+      host: ${workspace.host}
+    variables:
+      catalog: retail_lakehouse
+      environment: prod
+
+resources:
+  pipelines:
+    bronze_pipeline:
+      name: "retail-bronze-${var.environment}"
+      catalog: ${var.catalog}
+      schema: bronze
+      development: true
+      continuous: false
+      libraries:
+        - notebook:
+            path: ./notebooks/01_bronze_dlt.py
+      configuration:
+        landing_path_orders: "/mnt/landing/${var.environment}/orders"
+        landing_path_cdc_customers: "/mnt/landing/${var.environment}/cdc_customers"
+        landing_path_cdc_products: "/mnt/landing/${var.environment}/cdc_products"
+        
+    silver_pipeline:
+      name: "retail-silver-${var.environment}"
+      catalog: ${var.catalog}
+      schema: silver
+      development: true
+      continuous: false
+      libraries:
+        - notebook:
+            path: ./notebooks/02_silver_dlt.py
+            
+    gold_pipeline:
+      name: "retail-gold-${var.environment}"
+      catalog: ${var.catalog}
+      schema: gold
+      development: true
+      continuous: false
+      libraries:
+        - notebook:
+            path: ./notebooks/03_gold_dlt.py
+
+  jobs:
+    daily_optimize:
+      name: "daily-optimize-${var.environment}"
+      schedule:
+        quartz_cron_expression: "0 0 2 * * ?" # 2 AM every day
+        timezone_id: "UTC"
+      tasks:
+        - task_key: "optimize_fact_orders"
+          sql_task:
+            query:
+              alert_id: "" # Placeholder, in a real setup we'd reference a query ID or use a notebook task to run OPTIMIZE
+          # Alternatively, use a notebook task to run optimize commands
+          notebook_task:
+            notebook_path: ./notebooks/05_data_quality_queries.sql # placeholder
+

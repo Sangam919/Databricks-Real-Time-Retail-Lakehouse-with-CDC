@@ -1,0 +1,25 @@
+environment: prod
+
+# Catalog & Schemas
+catalog: retail_lakehouse
+schemas:
+  bronze: bronze
+  silver: silver
+  gold: gold
+
+# Ingestion Paths (ADLS Gen2 for Prod)
+landing_zones:
+  orders: "abfss://landing@<storage_account>.dfs.core.windows.net/prod/orders"
+  cdc_customers: "abfss://landing@<storage_account>.dfs.core.windows.net/prod/cdc_customers"
+  cdc_products: "abfss://landing@<storage_account>.dfs.core.windows.net/prod/cdc_products"
+
+# Checkpoint paths
+checkpoints:
+  bronze: "abfss://checkpoints@<storage_account>.dfs.core.windows.net/prod/bronze"
+  silver: "abfss://checkpoints@<storage_account>.dfs.core.windows.net/prod/silver"
+  gold: "abfss://checkpoints@<storage_account>.dfs.core.windows.net/prod/gold"
+
+# Pipeline settings
+pipeline:
+  development: false
+  continuous: true

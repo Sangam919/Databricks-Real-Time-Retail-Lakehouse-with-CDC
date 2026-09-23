@@ -1,0 +1,32 @@
+environment: dev
+
+# Catalog & Schemas
+catalog: retail_lakehouse_dev
+schemas:
+  bronze: bronze
+  silver: silver
+  gold: gold
+
+# Ingestion Paths (DBFS for local dev/Community Edition)
+landing_zones:
+  orders: "dbfs:/mnt/landing/dev/orders"
+  cdc_customers: "dbfs:/mnt/landing/dev/cdc_customers"
+  cdc_products: "dbfs:/mnt/landing/dev/cdc_products"
+
+# Checkpoint paths
+checkpoints:
+  bronze: "dbfs:/mnt/checkpoints/dev/bronze"
+  silver: "dbfs:/mnt/checkpoints/dev/silver"
+  gold: "dbfs:/mnt/checkpoints/dev/gold"
+
+# Generators config
+generators:
+  events_per_sec: 10
+  duration_sec: 60
+  error_rate: 0.05
+  batch_size: 100
+
+# Pipeline settings
+pipeline:
+  development: true
+  continuous: false

@@ -1,0 +1,28 @@
+{
+  "name": "retail-bronze-dev",
+  "storage": "dbfs:/mnt/checkpoints/dev/bronze",
+  "configuration": {
+    "landing_path_orders": "/mnt/landing/dev/orders",
+    "landing_path_cdc_customers": "/mnt/landing/dev/cdc_customers",
+    "landing_path_cdc_products": "/mnt/landing/dev/cdc_products"
+  },
+  "clusters": [
+    {
+      "label": "default",
+      "autoscale": {
+        "min_workers": 1,
+        "max_workers": 2
+      }
+    }
+  ],
+  "libraries": [
+    {
+      "notebook": {
+        "path": "../notebooks/01_bronze_dlt.py"
+      }
+    }
+  ],
+  "target": "bronze",
+  "continuous": false,
+  "development": true
+}
